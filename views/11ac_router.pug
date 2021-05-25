@@ -1,0 +1,58 @@
+extends ./layout.pug
+
+block title
+	title #{title}
+
+block content
+	header
+		h1 Router
+		p 5Port Gigabit Router의 상태를 확인 할 수 있는 화면입니다.
+		p 각 Router의 MAC 주소를 선택시 상세화면이 나타납니다.
+		hr
+	body(onload='showMenu()', href='javascript:void(0)')
+		header.w3-container.w3-xlarge
+		table#example.display(cellspacing='0', width='100%')
+			thead
+				tr
+					th MAC
+					th Firmware
+						div 설정 / 현재
+					th POE AP 5G SSID
+					th POE AP 2.4G SSID
+					th Log time
+					th Up-To-Date
+					th State
+			tfoot
+				tr
+					th MAC
+					th Firmware
+					th Log time
+					th Up-To-Date
+					th State
+			tbody
+				- for (device in devices)
+					tr
+						td
+							a(href='/router/11ac/' + devices[device].mac) #{devices[device].mac}
+						td (#{devices[device].fw.fw_ver}) #{devices[device].last_log.fw_ver}
+						td #{devices[device].config.g_5.poe_ap_ssid}
+						td #{devices[device].config.g_2_4.poe_ap_ssid}
+						td #{devices[device].log}
+						if devices[device].lastest == 1
+							td
+								font(color="blue") 최신버전
+						else
+							td
+								font(color="red") 업그레이드 대기
+						if devices[device].state == 1
+							td
+								font(color="blue") 동작중
+						else
+							td
+								font(color="red") 확인요망
+								
+		script.
+			function showMenu() {
+				var menu = document.getElementById('deviceMenu');
+				menu.className += " w3-show";
+			}

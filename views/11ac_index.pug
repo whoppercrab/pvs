@@ -1,0 +1,84 @@
+extends ./layout.pug
+
+block title
+	title #{title}
+
+block content
+	header
+		h1 Home
+		p 5Port Router와 11AC AP의 세트를 확인할 수 있는 화면입니다.	
+		hr
+	body
+		// Top header
+		header.w3-container.w3-xlarge
+		table#example.display(cellspacing='0', width='100%')
+			thead
+				tr
+					th Router
+					th AP1
+					th AP2
+					th AP3
+					th AP4
+					th 전류측정
+			tfoot
+				tr
+					th Router
+					th AP1
+					th AP2
+					th AP3
+					th AP4
+					th 전류측정
+			tbody
+				- for (device in devices)
+					tr
+						td
+							if devices[device].state == 1
+								a(style={color:'black'} href='/router/11ac/' + devices[device].mac) #{devices[device].mac}
+							else
+								a(style={color:'red'} href='/router/11ac/' + devices[device].mac) #{devices[device].mac}
+						- for (i in devices[device].ap)
+							- if ('None' == devices[device].ap[i])
+								td None
+									<p>
+									form(action='/11ac/' + devices[device].mac + '/poe_ap_reboot' method='post')
+										input(type='hidden', name='mac', value=devices[device].mac)
+										input(type='hidden', name='portnum', value=i)
+										input(type='submit', onclick='return clicked("재부팅하시겠습니까?")' name='measure', value='REBOOT')
+							- else
+								td
+									div 
+										- for ( ap_device in ap_devices)
+											- if (devices[device].ap[i]['mac'] == ap_devices[ap_device]['mac'])
+												if ap_devices[ap_device].state == 1
+													font(color="black") #{ap_devices[ap_device]['mac']} #{devices[device].ap[i]['ssid']}
+												else
+													font(color="red") #{ap_devices[ap_device]['mac']} #{devices[device].ap[i]['ssid']}
+										form(action=devices[device].mac + '/poe_ap_reboot' method='post')
+											input(type='hidden', name='mac', value=devices[device].mac)
+											input(type='hidden', name='portnum', value=i)
+											input(type='submit', onclick='return clicked("재부팅하시겠습니까?")' name='measure', value='REBOOT')
+
+						td
+							form(action='/11ac/' + devices[device].mac + '/poe_measure' method='post', id='poe_form')
+								input(type='hidden', name='mac', value=devices[device].mac)
+								input(type='button', onclick='poe_measure("'+devices[device].mac+'")', name='measure', value='측정')
+					tr
+						td
+							div
+								td #{devices[device].poe['poe1']}
+								td #{devices[device].poe['poe2']}
+								td #{devices[device].poe['poe3']}
+								td #{devices[device].poe['poe4']}
+
+		script.
+			function poe_measure(dev) {
+				if(confirm("전류를 측정하시겠습니까?") == true){
+					document.getElementById('poe_form'+dev).submit();
+					setTimeout(function(){
+						location.reload();
+					},1500);
+				}
+				else{
+					return;
+				}
+			}

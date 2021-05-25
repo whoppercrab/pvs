@@ -1,0 +1,48 @@
+extends ./layout.pug
+mixin space()
+	| !{' '}
+
+block title
+	title #{title}
+
+block content
+	header
+		h1 Basic Setting
+		p Router와 AP의 목록을 입력하거나 초기화할 수 있습니다.
+		hr
+	body(onload='showMenu()', href='javascript:void(0)')
+		form(action='setting/upload2' method='post' enctype="multipart/form-data")
+			fieldset
+				legend Device List Upload
+				input(type='file' name='list_file')
+				input(type='submit' onclick='return clicked("목록을 추가하시겠습니까?")' name='Upload' value='제출')
+		br
+		form(action='setting/drop2' method='post')
+			fieldset
+				legend Device List Reset
+				input(type='submit', onclick='return clicked("모든 목록이 삭제됩니다. 진행하시겠습니까?")', name='Remove')
+
+		br
+		form(action='setting/updateMac2' method='post')
+			fieldset
+				legend Change Mac
+				input(type='text' name='oldMac' placeholder="기존 Mac Address")
+				+space
+				label ->
+				+space
+				input(type='text' name='newMac' placeholder="신규 Mac Address")
+				+space
+				input(type='submit', onclick='return clicked("맥 주소를 변경하시겠습니까?")', name='update', value='변경')
+		br
+		form(action='setting/removeMac2' method='post')
+			fieldset
+				legend Remove Mac
+				input(type='text' name='mac' placeholder="지울 Mac Address")
+				+space
+				input(type='submit', onclick='return clicked("해당 기기를 삭제하시겠습니까?")', name='remove' value='삭제')
+		br
+		script.
+			function showMenu() {
+				var menu = document.getElementById('settingMenu');
+				menu.className += " w3-show";
+			}

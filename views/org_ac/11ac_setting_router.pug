@@ -1,0 +1,281 @@
+extends ./layout.pug
+
+block title
+	title #{title}
+
+block content
+	header
+		h1 Router Setting
+		p 5Port Gigabit Router의 펌웨어를 등록할 수 있습니다.
+		p 모든 Router의 설정값을 수정할 수 있습니다.
+		hr
+	body(onload='showMenu()', href='javascript:void(0)')
+		form(action='setting/upload' method='post' enctype='multipart/form-data')
+			fieldset
+				legend Router 펌웨어 등록
+				input(type='file' name='router_firmware')
+				input(type='submit' onclick='return clicked("펌웨어를 업로드 하시겠습니까?")' name='Upload')
+				|  현재버전:
+				|  #{device.fw.fw_ver}
+		br
+		form(action='setting/update' method='post')
+			fieldset
+				legend 
+				fieldset
+					legend Router 설정 정보
+					table
+						tr
+							td 동작 모드:
+							td
+								input#bridge(type='radio', name='op_mode', value='1') 
+								|	Bridge 
+								input#nat(type='radio', name='op_mode', value='0')
+								|	NAT 
+						tr
+							td IP 주소:
+							td
+								input(type='text', name='ip_addr', value=device.config.ip_addr, size='10', maxlength='15')
+						tr
+							td 동적 IP 할당 범위:
+							td
+								input(type='text', name='dhcp_client_start', value=device.config.dhcp_client_start, size='10', maxlength='15')
+								|	~ 	
+								input(type='text', name='dhcp_client_end', value=device.config.dhcp_client_end, size='10', maxlength='15')
+						tr
+							td PVS 서버 주소:
+							td
+								input(type='text', name='pvs_address', value=device.config.pvs_address, size='26')
+								|   
+						tr
+							td PVS 접근 주기:
+							td
+								input(type='text', name='pvs_period', value=device.config.pvs_period, size='5')
+								|   (일)
+				br
+				fieldset
+					legend 5G 무선 설정 정보
+					table
+						tr
+							td POE AP SSID:
+							td
+								input(type='text', name='poe_ap_5g_ssid', value=device.config.g_5.poe_ap_ssid size='10')
+								|
+						tr
+							td POE AP PASSWORD:
+							td
+								input(type='text', name='poe_ap_5g_password', value=device.config.g_5.poe_ap_password, size='10')
+								|
+						tr
+							td SSID 숨김:
+							td
+								input#hidden0(type='radio', name='hidden', value='0')
+								|   공개
+								input#hidden1(type='radio', name='hidden', value='1')
+								|  비공개
+						tr
+							td 모드:
+							td
+								select#mode(name='mode')
+									option#mode4(value='4') 5GHz(a)
+									option#mode18(value='8') 5GHz(n)
+									option#mode12(value='12') 5GHz(a+n)
+									option#mode64(value='64') 5GHz(ac)
+									option#mode72(value='72') 5GHz(n+ac)
+									option#mode76(value='76') 5GHz(a+n+ac)
+						tr
+							td 채널 대역폭
+							td
+								input#bandwidth0(type='radio', name='bandwidth', value='0')
+								|   20MHz
+								input#bandwidth1(type='radio', name='bandwidth', value='1')
+								|   40Mhz
+								input#bandwidth2(type='radio', name='bandwidth', value='2')
+								|   80Mhz (기본값 80MHz)
+						tr
+							td 채널:
+							td
+								select#channel(name='channel')
+									option#channel0(value='0') Auto(DFS)
+									option#channel36(value='36') 36
+									option#channel40(value='40') 40
+									option#channel44(value='44') 44
+									option#channel48(value='48') 48
+									option#channel52(value='52') 52
+									option#channel56(value='56') 56
+									option#channel60(value='60') 60
+									option#channel64(value='64') 64
+									option#channel100(value='100') 100
+									option#channel104(value='104') 104
+									option#channel108(value='108') 108
+									option#channel112(value='112') 112
+									option#channel116(value='116') 116
+									option#channel136(value='136') 136
+									option#channel140(value='140') 140
+									option#channel149(value='149') 149
+									option#channel153(value='153') 153
+									option#channel157(value='157') 157
+									option#channel161(value='161') 161
+									option#channel165(value='165') 165
+						tr
+							td 송신 출력 지수:
+							td
+								input#power0(type='radio', name='power', value='0')
+								|   100%(기본값 100%)
+								input#power1(type='radio', name='power', value='1')
+								|   70%
+								input#power2(type='radio', name='power', value='2')
+								|   50%
+								input#power3(type='radio', name='power', value='3')
+								|   35%
+								input#power4(type='radio', name='power', value='4')
+								|   15%
+				br
+				fieldset
+					legend 2.4G 무선 설정 정보
+					table
+						tr
+							td POE AP SSID:
+							td
+								input(type='text', name='poe_ap_2_4g_ssid', value=device.config.g_2_4.poe_ap_ssid size='10')
+								|
+						tr
+							td POE AP PASSWORD:
+							td
+								input(type='text', name='poe_ap_2_4g_password', value=device.config.g_2_4.poe_ap_password, size='10')
+								|
+						tr
+							td 숨김:
+							td
+								input#hidden_2_4_0(type='radio', name='hidden_2_4', value='0')
+								|   공개
+								input#hidden_2_4_1(type='radio', name='hidden_2_4', value='1')
+								|   비공개
+						tr
+							td 모드:
+							td
+								select#mode_2_4_(name='mode_2_4')
+									option#mode_2_4_1(value='1') 2.4GHz(b)
+									option#mode_2_4_2(value='2') 2.4GHz(g)
+									option#mode_2_4_8(value='8') 2.4GHz(n)
+									option#mode_2_4_3(value='3') 2.4GHz(b+g)
+									option#mode_2_4_10(value='10') 2.4GHz(g+n)
+									option#mode_2_4_11(value='11') 2.4GHz(b+g+n)
+						tr
+							td 채널:
+							td
+								select#channel_2_4_(name='channel_2_4')
+									option#channel_2_4_0(value='0') Auto
+									option#channel_2_4_1(value='1') 1
+									option#channel_2_4_2(value='2') 2
+									option#channel_2_4_3(value='3') 3
+									option#channel_2_4_4(value='4') 4
+									option#channel_2_4_5(value='5') 5
+									option#channel_2_4_6(value='6') 6
+									option#channel_2_4_7(value='7') 7
+									option#channel_2_4_8(value='8') 8
+									option#channel_2_4_9(value='9') 9
+									option#channel_2_4_10(value='10') 10
+									option#channel_2_4_11(value='11') 11
+						tr
+							td 채널 대역폭:
+							td
+								input#bandwidth_2_4_0(type='radio', name='bandwidth_2_4', value='0')
+								|   20MHz
+								input#bandwidth_2_4_1(type='radio', name='bandwidth_2_4', value='1')
+								|   40Mhz (기본값 40MHz)
+						tr
+							td 송신 출력:
+							td
+								input#power_2_4_0(type='radio', name='power_2_4', value='0')
+								|   100%(기본값 100%)
+								input#power_2_4_1(type='radio', name='power_2_4', value='1')
+								|   70%
+								input#power_2_4_2(type='radio', name='power_2_4', value='2')
+								|   50%
+								input#power_2_4_3(type='radio', name='power_2_4', value='3')
+								|   35%
+								input#power_2_4_4(type='radio', name='power_2_4', value='4')
+								|   15%
+				br
+				input(type='submit', onclick='return clicked("변경된 내용으로 저장하시겠습니까?")' value='적용')
+			br
+
+		script.
+			function showMenu() {
+				var menu = document.getElementById('settingMenu');
+				menu.className += " w3-show";
+				checkMode();
+			}
+
+			function checkMode() {
+				value = "#{device.config.op_mode}";
+				if(value == '1') {
+					var bridge = document.getElementById('bridge');
+					bridge.checked = true;
+				} else {
+					var nat = document.getElementById('nat');
+					nat.checked = true;
+				}
+
+				value = "#{device.config.g_5.bandwidth}";
+				bandwidth = document.getElementById('bandwidth' + value);
+				bandwidth.checked = true;
+
+				value = "#{device.config.g_5.power}";
+				power = document.getElementById('power' + value);
+				power.checked = true;
+
+				value = "#{device.config.g_5.mode}";
+				mode = document.getElementById('mode' + value);
+				mode.selected = true;
+
+				value = "#{device.config.g_5.channel}";
+				channel = document.getElementById('channel' + value);
+				channel.selected = true;
+
+				value = "#{device.config.g_5.hidden}";
+				hidden = document.getElementById('hidden' + value);
+				hidden.checked = true;
+
+				value = "#{device.config.g_2_4.bandwidth}";
+				bandwidth_2_4 = document.getElementById('bandwidth_2_4_' + value);
+				bandwidth_2_4.checked = true;
+
+				value = "#{device.config.g_2_4.mode}";
+				mode_2_4 = document.getElementById('mode_2_4_' + value);
+				mode_2_4.selected = true;
+
+				value = "#{device.config.g_2_4.channel}";
+				channel_2_4 = document.getElementById('channel_2_4_' + value);
+				channel_2_4.selected = true;
+
+				value = "#{device.config.g_2_4.power}";
+				power_2_4 = document.getElementById('power_2_4_' + value);
+				power_2_4.checked = true;
+
+				value = "#{device.config.g_2_4.hidden}";
+				hidden_2_4 = document.getElementById('hidden_2_4_' + value);
+				hidden_2_4.checked = true;
+			}
+
+			function selectSubmit() {
+				var channel = document.getElementById('channel');
+				channel.value = channel.options[channel.selectedIndex].value;
+				var mode = document.getElementById('mode');
+				mode.value = mode.options[mode.selectedIndex].value;
+
+				var mode_2_4 = document.getElementById('mode_2_4');
+				mode_2_4.value = mode_2_4.options[mode_2_4.selectedIndex].value;
+
+				var channel_2_4 = document.getElementById('channel_2_4');
+				channel_2_4.value = channel_2_4.options[channel_2_4.selectedIndex].value;
+			}
+
+			function clickedSubmit(e) {
+				if(confirm(e)) {
+					selectSubmit();
+					return true;
+				}
+				return false;
+			}
+

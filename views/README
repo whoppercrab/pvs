@@ -1,0 +1,4 @@
+patch note ,yhkim 20.07.22
+
+- ap설정 변경 또는 웹 페이지 로딩시 wifi opmode 0으로 바뀌는 현상 수정
+- web 스크립트 버그 수정(SyntaxError)
